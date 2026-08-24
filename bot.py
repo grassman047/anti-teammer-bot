@@ -31,7 +31,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox"):
     nick = discord.ui.TextInput(
         label="Ник в Roblox",
-        placeholder="Введите свой никнейм",
+        placeholder="Введите свой никнейм (только латиница)",
         min_length=1,
         max_length=50,
         required=True
@@ -85,6 +85,8 @@ async def create_button(interaction: discord.Interaction):
         title="🔰 Запросить помощь против тиммеров в JJS 🔰",
         description=(
             "❓ Чтобы запросить помощь, нажмите кнопку ниже и укажите свой юзернейм в Roblox ❓\n\n"
+            "⚡ Важно, чтобы вы приняли запрос в друзья людям которые хотят вам помочь "
+            "(это надо для присоединения на ваш сервер) ⚡\n\n"
             "⚠️ **Запрещено** ⚠️ :\n"
             "• Спамить запросами\n"
             "• Запрашивать помощь не против тиммеров\n"
