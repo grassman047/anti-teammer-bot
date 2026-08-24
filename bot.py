@@ -81,7 +81,6 @@ async def create_button(interaction: discord.Interaction):
         await interaction.response.send_message(f"❌ Команда только в <#{FIRST_CHANNEL_ID}>", ephemeral=True)
         return
     
-    # НОВОЕ ОФОРМЛЕНИЕ
     embed = discord.Embed(
         title="🔰 Запросить помощь против тиммеров в JJS 🔰",
         description=(
