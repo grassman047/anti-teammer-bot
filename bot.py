@@ -95,7 +95,7 @@ async def create_button(interaction: discord.Interaction):
         ),
         color=0x00ff00
     )
-    embed.set_image(url="https://cdn.discordapp.com/attachments/1039182671710007296/1541528691371417682/image.png?ex=6a8debf8&is=6a8c9a78&hm=aab3a44a62f66e2b38a3625428ef25dc5bd00a050d6dc1e66e92392917c3abea&")  # ЗАМЕНИ НА СВОЮ ССЫЛКУ
+    embed.set_image(url="https://cdn.discordapp.com/attachments/1039182671710007296/1541528691371417682/image.png?ex=6a8debf8&is=6a8c9a78&hm=aab3a44a62f66e2b38a3625428ef25dc5bd00a050d6dc1e66e92392917c3abea&")
     await interaction.channel.send(embed=embed, view=NickButtonView())
     await interaction.response.send_message("✅ Кнопка создана!", ephemeral=True)
 
