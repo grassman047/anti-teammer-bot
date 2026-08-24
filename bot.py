@@ -5,7 +5,7 @@ from flask import Flask
 from threading import Thread
 import asyncio
 
-# ===== ВЕБ-СЕРВЕР ДЛЯ RENDER =====
+# ===== ВЕБ-СЕРВЕР =====
 app = Flask('')
 
 @app.route('/')
@@ -16,13 +16,16 @@ def run_web():
     app.run(host='0.0.0.0', port=8080)
 
 Thread(target=run_web).start()
-# ===================================
+# =======================
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 ROLE_ID = 1540325741835845652
 FIRST_CHANNEL_ID = 1541123271725027358
 SECOND_CHANNEL_ID = 1541123872961728693
+
+# ID ТВОЕГО СЕРВЕРА (замени!)
+GUILD_ID = 1525217899386507424  # <--- ВСТАВЬ СЮДА ID СЕРВЕРА
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
@@ -55,7 +58,8 @@ class NickButtonView(discord.ui.View):
     async def send_nick_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_modal(RobloxNickModal())
 
-@bot.tree.command(name="create_nick_button", description="Создать кнопку для отправки ника в Roblox")
+# КОМАНДА ПРИВЯЗАНА К КОНКРЕТНОМУ СЕРВЕРУ
+@bot.tree.command(name="create_nick_button", description="Создать кнопку для отправки ника в Roblox", guild=discord.Object(id=GUILD_ID))
 async def create_button(interaction: discord.Interaction):
     if not interaction.user.guild_permissions.administrator:
         await interaction.response.send_message("❌ Нет прав!", ephemeral=True)
@@ -75,8 +79,9 @@ async def create_button(interaction: discord.Interaction):
 async def on_ready():
     await bot.wait_until_ready()
     try:
-        await bot.tree.sync()
-        print(f"✅ Бот {bot.user} запущен! Команды синхронизированы глобально.")
+        # Синхронизация ТОЛЬКО для этого сервера
+        await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
+        print(f"✅ Бот {bot.user} запущен! Команды синхронизированы для сервера {GUILD_ID}.")
     except Exception as e:
         print(f"❌ Ошибка синхронизации: {e}")
 
@@ -88,8 +93,8 @@ async def test(ctx):
 @commands.is_owner()
 async def sync(ctx):
     try:
-        await bot.tree.sync()
-        await ctx.send("✅ Слеш-команды синхронизированы!")
+        await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
+        await ctx.send("✅ Слеш-команды синхронизированы для этого сервера!")
     except Exception as e:
         await ctx.send(f"❌ Ошибка: {e}")
 
