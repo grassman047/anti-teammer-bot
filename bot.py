@@ -58,7 +58,7 @@ class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox")
         message = (
             f"❗{role_mention}❗\n\n"
             f"⚔️ **Нужна помощь против тиммеров от {user_mention}** ⚔️\n"
-            f"# 🛡️ Зайти к : `{nick_value}` 🛡️"
+            f"# 🛡️ Зайти к : `{nick_value}` на сервер и помочь с тиммерами 🛡️"
         )
         
         await channel.send(message)
