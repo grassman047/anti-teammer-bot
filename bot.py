@@ -43,18 +43,18 @@ class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox")
             await interaction.response.send_message("❌ Канал не найден", ephemeral=True)
             return
         
-        # Формируем сообщение
         role_mention = f"<@&{ROLE_ID}>"
         user_mention = interaction.user.mention
         nick_value = self.nick.value
         
-        # Отправляем в канал
-        await channel.send(
-            f"{role_mention}\n"
-            f"📝 **Нужна помощь против тиммеров:**\n"
-            f"`{nick_value}`\n\n"
-            f"{user_mention}"
+        # ФОРМАТИРОВАНИЕ ПО ТВОЕМУ ШАБЛОНУ
+        message = (
+            f"❗{role_mention}❗\n\n"
+            f"⚔️ **Нужна помощь против тиммеров от {user_mention}** ⚔️\n"
+            f"# 🛡️ Отправить в ДР и зайти к : `{nick_value}` 🛡️"
         )
+        
+        await channel.send(message)
         await interaction.response.send_message("✅ Запрос отправлен!", ephemeral=True)
 
 class NickButtonView(discord.ui.View):
