@@ -3,7 +3,7 @@ from discord.ext import commands
 import os
 from flask import Flask
 from threading import Thread
-import asyncio
+import re
 
 # ===== ВЕБ-СЕРВЕР =====
 app = Flask('')
@@ -31,7 +31,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox"):
     nick = discord.ui.TextInput(
         label="Ник в Roblox",
-        placeholder="Введите свой никнейм",
+        placeholder="Введите свой никнейм (только латиница)",
         min_length=1,
         max_length=50,
         required=True
@@ -43,11 +43,18 @@ class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox")
             await interaction.response.send_message("❌ Канал не найден", ephemeral=True)
             return
         
+        nick_value = self.nick.value.strip()
+        
+        if not re.match(r'^[a-zA-Z0-9_]+$', nick_value):
+            await interaction.response.send_message(
+                "❌ Ник должен содержать **только латиницу** (буквы A-Z, a-z). Попробуй ещё раз.",
+                ephemeral=True
+            )
+            return
+        
         role_mention = f"<@&{ROLE_ID}>"
         user_mention = interaction.user.mention
-        nick_value = self.nick.value
         
-        # ФОРМАТИРОВАНИЕ ПО ТВОЕМУ ШАБЛОНУ
         message = (
             f"❗{role_mention}❗\n\n"
             f"⚔️ **Нужна помощь против тиммеров от {user_mention}** ⚔️\n"
@@ -61,7 +68,7 @@ class NickButtonView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
 
-    @discord.ui.button(label="📝 Отправить ник в Roblox", style=discord.ButtonStyle.primary)
+    @discord.ui.button(label="📝 Отправить ник в Roblox", style=discord.ButtonStyle.success)  # ЗЕЛЁНАЯ
     async def send_nick_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_modal(RobloxNickModal())
 
