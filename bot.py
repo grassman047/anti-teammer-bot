@@ -68,7 +68,7 @@ class NickButtonView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
 
-    @discord.ui.button(label="📝 Отправить ник в Roblox", style=discord.ButtonStyle.success)  # ЗЕЛЁНАЯ
+    @discord.ui.button(label="🔰 Запросить помощь", style=discord.ButtonStyle.success)
     async def send_nick_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_modal(RobloxNickModal())
 
@@ -80,9 +80,14 @@ async def create_button(interaction: discord.Interaction):
     if interaction.channel.id != FIRST_CHANNEL_ID:
         await interaction.response.send_message(f"❌ Команда только в <#{FIRST_CHANNEL_ID}>", ephemeral=True)
         return
+    
+    # НОВОЕ ОФОРМЛЕНИЕ
     embed = discord.Embed(
-        title="📋 Отправка ника в Roblox",
-        description="Нажми на кнопку ниже, чтобы указать свой никнейм",
+        title="🔰 Запросить помощь против тиммеров в JJS 🔰",
+        description=(
+            "❓ Чтобы запросить помощь, нажмите кнопку ниже и укажите свой никнейм в Roblox ❓\n\n"
+            "⚡ Важно, чтобы вы запрашивали помощь **только** против **тиммеров** ⚡"
+        ),
         color=0x00ff00
     )
     await interaction.channel.send(embed=embed, view=NickButtonView())
