@@ -46,7 +46,7 @@ class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox")
             return
         role_mention = f"<@&{ROLE_ID}>"
         await channel.send(
-            f"{role_mention}\n📝 **Новый ник от {interaction.user.mention}:**\n```{self.nick.value}```"
+            f"{role_mention}\n📝 **Нужна помощь от тиммеров, отправляйте в др - ник {interaction.user.mention}:**\n`{self.nick.value}`"
         )
         await interaction.response.send_message("✅ Ник отправлен!", ephemeral=True)
 
