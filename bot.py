@@ -1,12 +1,27 @@
 import discord
 from discord.ext import commands
 import os
+from flask import Flask
+from threading import Thread
+
+# ===== ВЕБ-СЕРВЕР ДЛЯ RENDER =====
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "✅ Бот работает!"
+
+def run_web():
+    app.run(host='0.0.0.0', port=8080)
+
+Thread(target=run_web).start()
+# ===================================
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 ROLE_ID = 1540325741835845652
-FIRST_CHANNEL_ID = 1541123271725027358   # канал с кнопкой
-SECOND_CHANNEL_ID = 1541123872961728693  # канал куда приходят ники
+FIRST_CHANNEL_ID = 1541123271725027358
+SECOND_CHANNEL_ID = 1541123872961728693
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
