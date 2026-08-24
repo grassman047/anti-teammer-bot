@@ -3,8 +3,9 @@ from discord.ext import commands
 import os
 from flask import Flask
 from threading import Thread
+import asyncio
 
-# ===== ВЕБ-СЕРВЕР ДЛЯ RENDER =====
+# ===== ВЕБ-СЕРВЕР =====
 app = Flask('')
 
 @app.route('/')
@@ -15,7 +16,7 @@ def run_web():
     app.run(host='0.0.0.0', port=8080)
 
 Thread(target=run_web).start()
-# ===================================
+# =======================
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 
@@ -72,7 +73,16 @@ async def create_button(interaction: discord.Interaction):
 
 @bot.event
 async def on_ready():
-    await bot.tree.sync()
-    print(f"✅ Бот {bot.user} запущен!")
+    await bot.wait_until_ready()
+    try:
+        await bot.tree.sync()
+        print(f"✅ Бот {bot.user} запущен! Команды синхронизированы.")
+    except Exception as e:
+        print(f"❌ Ошибка синхронизации: {e}")
+
+# Обычная команда для проверки
+@bot.command()
+async def test(ctx):
+    await ctx.send("✅ Бот работает!")
 
 bot.run(TOKEN)
