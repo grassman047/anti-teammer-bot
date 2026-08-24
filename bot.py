@@ -5,7 +5,7 @@ from flask import Flask
 from threading import Thread
 import asyncio
 
-# ===== ВЕБ-СЕРВЕР =====
+# ===== ВЕБ-СЕРВЕР ДЛЯ RENDER =====
 app = Flask('')
 
 @app.route('/')
@@ -16,7 +16,7 @@ def run_web():
     app.run(host='0.0.0.0', port=8080)
 
 Thread(target=run_web).start()
-# =======================
+# ===================================
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 
@@ -76,13 +76,21 @@ async def on_ready():
     await bot.wait_until_ready()
     try:
         await bot.tree.sync()
-        print(f"✅ Бот {bot.user} запущен! Команды синхронизированы.")
+        print(f"✅ Бот {bot.user} запущен! Команды синхронизированы глобально.")
     except Exception as e:
         print(f"❌ Ошибка синхронизации: {e}")
 
-# Обычная команда для проверки
 @bot.command()
 async def test(ctx):
     await ctx.send("✅ Бот работает!")
+
+@bot.command()
+@commands.is_owner()
+async def sync(ctx):
+    try:
+        await bot.tree.sync()
+        await ctx.send("✅ Слеш-команды синхронизированы!")
+    except Exception as e:
+        await ctx.send(f"❌ Ошибка: {e}")
 
 bot.run(TOKEN)
