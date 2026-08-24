@@ -23,9 +23,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 ROLE_ID = 1540325741835845652
 FIRST_CHANNEL_ID = 1541123271725027358
 SECOND_CHANNEL_ID = 1541123872961728693
-
-# ID ТВОЕГО СЕРВЕРА (замени!)
-GUILD_ID = 1525217899386507424  # <--- ВСТАВЬ СЮДА ID СЕРВЕРА
+GUILD_ID = 1525217899386507424
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
@@ -44,11 +42,20 @@ class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox")
         if not channel:
             await interaction.response.send_message("❌ Канал не найден", ephemeral=True)
             return
+        
+        # Формируем сообщение
         role_mention = f"<@&{ROLE_ID}>"
+        user_mention = interaction.user.mention
+        nick_value = self.nick.value
+        
+        # Отправляем в канал
         await channel.send(
-            f"{role_mention}\n📝 **Нужна помощь от тиммеров, отправляйте в др - ник {interaction.user.mention}:**\n`{self.nick.value}`"
+            f"{role_mention}\n"
+            f"📝 **Нужна помощь против тиммеров:**\n"
+            f"`{nick_value}`\n\n"
+            f"{user_mention}"
         )
-        await interaction.response.send_message("✅ Ник отправлен!", ephemeral=True)
+        await interaction.response.send_message("✅ Запрос отправлен!", ephemeral=True)
 
 class NickButtonView(discord.ui.View):
     def __init__(self):
@@ -58,7 +65,6 @@ class NickButtonView(discord.ui.View):
     async def send_nick_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_modal(RobloxNickModal())
 
-# КОМАНДА ПРИВЯЗАНА К КОНКРЕТНОМУ СЕРВЕРУ
 @bot.tree.command(name="create_nick_button", description="Создать кнопку для отправки ника в Roblox", guild=discord.Object(id=GUILD_ID))
 async def create_button(interaction: discord.Interaction):
     if not interaction.user.guild_permissions.administrator:
@@ -79,7 +85,6 @@ async def create_button(interaction: discord.Interaction):
 async def on_ready():
     await bot.wait_until_ready()
     try:
-        # Синхронизация ТОЛЬКО для этого сервера
         await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
         print(f"✅ Бот {bot.user} запущен! Команды синхронизированы для сервера {GUILD_ID}.")
     except Exception as e:
