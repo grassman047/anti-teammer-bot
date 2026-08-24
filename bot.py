@@ -31,7 +31,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox"):
     nick = discord.ui.TextInput(
         label="Ник в Roblox",
-        placeholder="Введите свой никнейм (только латиница)",
+        placeholder="Введите свой никнейм",
         min_length=1,
         max_length=50,
         required=True
