@@ -30,6 +30,12 @@ GUILD_ID = 1525217899386507424
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+# Функция для генерации невидимого суффикса
+def get_invisible_suffix():
+    # Используем разные невидимые символы, чтобы сообщения не склеивались
+    invisible_chars = ['\u200b', '\u200c', '\u200d', '\u2060', '\u2061', '\u2062', '\u2063', '\u2064']
+    return ''.join(random.choices(invisible_chars, k=3))
+
 class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox"):
     nick = discord.ui.TextInput(
         label="Ник в Roblox",
@@ -57,14 +63,14 @@ class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox")
         role_mention = f"<@&{ROLE_ID}>"
         user_mention = interaction.user.mention
         
-        # Генерируем случайную строку, чтобы сообщения не объединялись
-        random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+        # Генерируем уникальный невидимый суффикс
+        suffix = get_invisible_suffix()
         
         message = (
             f"❗{role_mention}❗\n\n"
             f"⚔️ **Нужна помощь против тиммеров от {user_mention}** ⚔️\n"
             f"# 🛡️ Отправить в ДР и зайти к : `{nick_value}` 🛡️\n\n"
-            f"||{random_suffix}||"
+            f"||{suffix}||"
         )
         
         await channel.send(message)
@@ -91,7 +97,7 @@ async def create_button(interaction: discord.Interaction):
         title="🔰 Запросить помощь против тиммеров в JJS 🔰",
         description=(
             "❓ Чтобы запросить помощь, нажмите кнопку ниже и укажите свой юзернейм в Roblox ❓\n\n"
-            "⚡ Важно, чтобы вы сделали в настройках роблокса всё как на скришноте ниже "
+            "⚡ Важно, чтобы вы сделали в настройках роблокса всё как на скриншоте ниже "
             "(это надо для присоединения на ваш сервер) ⚡\n\n"
             "⚠️ **Запрещено** ⚠️ :\n"
             "•  Спамить запросами\n"
