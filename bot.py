@@ -4,6 +4,8 @@ import os
 from flask import Flask
 from threading import Thread
 import re
+import random
+import string
 
 # ===== ВЕБ-СЕРВЕР =====
 app = Flask('')
@@ -55,10 +57,14 @@ class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox")
         role_mention = f"<@&{ROLE_ID}>"
         user_mention = interaction.user.mention
         
+        # Генерируем случайную строку, чтобы сообщения не объединялись
+        random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+        
         message = (
             f"❗{role_mention}❗\n\n"
             f"⚔️ **Нужна помощь против тиммеров от {user_mention}** ⚔️\n"
-            f"# 🛡️ Зайти к : `{nick_value}` на сервер и помочь с тиммерами 🛡️"
+            f"# 🛡️ Отправить в ДР и зайти к : `{nick_value}` 🛡️\n\n"
+            f"||{random_suffix}||"
         )
         
         await channel.send(message)
@@ -85,7 +91,7 @@ async def create_button(interaction: discord.Interaction):
         title="🔰 Запросить помощь против тиммеров в JJS 🔰",
         description=(
             "❓ Чтобы запросить помощь, нажмите кнопку ниже и укажите свой юзернейм в Roblox ❓\n\n"
-            "⚡ Важно, чтобы вы сделали в настройках роблокс аккаунта всё как на скриншоте снизу "
+            "⚡ Важно, чтобы вы приняли запрос в друзья людям которые хотят вам помочь "
             "(это надо для присоединения на ваш сервер) ⚡\n\n"
             "⚠️ **Запрещено** ⚠️ :\n"
             "• Спамить запросами\n"
