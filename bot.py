@@ -5,7 +5,7 @@ from flask import Flask
 from threading import Thread
 import re
 import asyncio
-import aiohttp  # Для self-ping
+import aiohttp
 
 # ===== ВЕБ-СЕРВЕР =====
 app = Flask('')
@@ -21,7 +21,7 @@ Thread(target=run_web).start()
 # =======================
 
 TOKEN = os.getenv('DISCORD_TOKEN')
-RENDER_URL = "https://anti-teammer-bot.onrender.com"  # ТВОЙ URL НА RENDER
+RENDER_URL = "https://anti-teammer-bot.onrender.com"  # ТВОЙ URL
 
 ROLE_ID = 1540325741835845652
 FIRST_CHANNEL_ID = 1541123271725027358
@@ -31,9 +31,8 @@ GUILD_ID = 1525217899386507424
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# ===== ФУНКЦИЯ САМОПИНГА (ЧТОБЫ RENDER НЕ СПАЛ) =====
+# ===== ФУНКЦИЯ САМОПИНГА =====
 async def self_ping():
-    """Пингует сам себя каждые 4 минуты, чтобы Render не засыпал"""
     await bot.wait_until_ready()
     while not bot.is_closed():
         try:
@@ -43,7 +42,7 @@ async def self_ping():
         except Exception as e:
             print(f"Self-ping error: {e}")
         await asyncio.sleep(240)  # 4 минуты
-# ==================================================
+# ==============================
 
 class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox"):
     nick = discord.ui.TextInput(
@@ -91,15 +90,15 @@ class NickButtonView(discord.ui.View):
 
 @bot.tree.command(name="create_nick_button", description="Создать кнопку для отправки ника в Roblox", guild=discord.Object(id=GUILD_ID))
 async def create_button(interaction: discord.Interaction):
+    # СНАЧАЛА ВСЕГДА DEFER, ЧТОБЫ DISCORD ЗНАЛ, ЧТО МЫ РАБОТАЕМ
+    await interaction.response.defer(ephemeral=True)
+    
     if not interaction.user.guild_permissions.administrator:
-        await interaction.response.send_message("❌ Нет прав!", ephemeral=True)
+        await interaction.followup.send("❌ Нет прав!", ephemeral=True)
         return
     if interaction.channel.id != FIRST_CHANNEL_ID:
-        await interaction.response.send_message(f"❌ Команда только в <#{FIRST_CHANNEL_ID}>", ephemeral=True)
+        await interaction.followup.send(f"❌ Команда только в <#{FIRST_CHANNEL_ID}>", ephemeral=True)
         return
-    
-    # СНАЧАЛА ОТВЕЧАЕМ, ЧТОБЫ DISCORD НЕ ВЫДАЛ "ПРИЛОЖЕНИЕ НЕ ОТВЕЧАЕТ"
-    await interaction.response.defer(ephemeral=True)
     
     embed = discord.Embed(
         title="🔰 Запросить помощь против тиммеров в JJS 🔰",
@@ -117,8 +116,6 @@ async def create_button(interaction: discord.Interaction):
     )
     embed.set_image(url="https://media.discordapp.net/attachments/1039182671710007296/1549863612233941174/image_3.png?ex=6aac3e78&is=6aaaecf8&hm=683d3c8051c37f9806646148f5cf78cc5dcc67218e2bf661d4b70035cbfc2ace&=&format=webp&quality=lossless")
     await interaction.channel.send(embed=embed, view=NickButtonView())
-    
-    # ФИНАЛЬНЫЙ ОТВЕТ ПОЛЬЗОВАТЕЛЮ
     await interaction.followup.send("✅ Кнопка создана!", ephemeral=True)
 
 @bot.event
@@ -127,7 +124,6 @@ async def on_ready():
     try:
         await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
         print(f"✅ Бот {bot.user} запущен! Команды синхронизированы для сервера {GUILD_ID}.")
-        # ЗАПУСКАЕМ САМОПИНГ
         bot.loop.create_task(self_ping())
     except Exception as e:
         print(f"❌ Ошибка синхронизации: {e}")
