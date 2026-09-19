@@ -81,10 +81,9 @@ async def create_button(interaction: discord.Interaction):
         await interaction.response.send_message(f"❌ Команда только в <#{FIRST_CHANNEL_ID}>", ephemeral=True)
         return
     
-    # СНАЧАЛА ОТВЕЧАЕМ НА КОМАНДУ (чтобы Discord не выдал "Приложение не отвечает")
-    await interaction.response.send_message("✅ Кнопка создана!", ephemeral=True)
+    # СРАЗУ ОТВЕЧАЕМ, ЧТОБЫ DISCORD НЕ ВЫДАЛ "ПРИЛОЖЕНИЕ НЕ ОТВЕЧАЕТ"
+    await interaction.response.defer(ephemeral=True)
     
-    # ПОТОМ ОТПРАВЛЯЕМ СООБЩЕНИЕ С КНОПКОЙ
     embed = discord.Embed(
         title="🔰 Запросить помощь против тиммеров в JJS 🔰",
         description=(
@@ -101,6 +100,9 @@ async def create_button(interaction: discord.Interaction):
     )
     embed.set_image(url="https://media.discordapp.net/attachments/1039182671710007296/1549863612233941174/image_3.png?ex=6aac3e78&is=6aaaecf8&hm=683d3c8051c37f9806646148f5cf78cc5dcc67218e2bf661d4b70035cbfc2ace&=&format=webp&quality=lossless")
     await interaction.channel.send(embed=embed, view=NickButtonView())
+    
+    # ФИНАЛЬНЫЙ ОТВЕТ ПОЛЬЗОВАТЕЛЮ
+    await interaction.followup.send("✅ Кнопка создана!", ephemeral=True)
 
 @bot.event
 async def on_ready():
