@@ -4,6 +4,8 @@ import os
 from flask import Flask
 from threading import Thread
 import re
+import asyncio
+import aiohttp  # Для self-ping
 
 # ===== ВЕБ-СЕРВЕР =====
 app = Flask('')
@@ -19,6 +21,7 @@ Thread(target=run_web).start()
 # =======================
 
 TOKEN = os.getenv('DISCORD_TOKEN')
+RENDER_URL = "https://anti-teammer-bot.onrender.com"  # ТВОЙ URL НА RENDER
 
 ROLE_ID = 1540325741835845652
 FIRST_CHANNEL_ID = 1541123271725027358
@@ -27,6 +30,20 @@ GUILD_ID = 1525217899386507424
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
+
+# ===== ФУНКЦИЯ САМОПИНГА (ЧТОБЫ RENDER НЕ СПАЛ) =====
+async def self_ping():
+    """Пингует сам себя каждые 4 минуты, чтобы Render не засыпал"""
+    await bot.wait_until_ready()
+    while not bot.is_closed():
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(RENDER_URL) as response:
+                    print(f"Self-ping: {response.status}")
+        except Exception as e:
+            print(f"Self-ping error: {e}")
+        await asyncio.sleep(240)  # 4 минуты
+# ==================================================
 
 class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox"):
     nick = discord.ui.TextInput(
@@ -81,7 +98,7 @@ async def create_button(interaction: discord.Interaction):
         await interaction.response.send_message(f"❌ Команда только в <#{FIRST_CHANNEL_ID}>", ephemeral=True)
         return
     
-    # СРАЗУ ОТВЕЧАЕМ, ЧТОБЫ DISCORD НЕ ВЫДАЛ "ПРИЛОЖЕНИЕ НЕ ОТВЕЧАЕТ"
+    # СНАЧАЛА ОТВЕЧАЕМ, ЧТОБЫ DISCORD НЕ ВЫДАЛ "ПРИЛОЖЕНИЕ НЕ ОТВЕЧАЕТ"
     await interaction.response.defer(ephemeral=True)
     
     embed = discord.Embed(
@@ -110,6 +127,8 @@ async def on_ready():
     try:
         await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
         print(f"✅ Бот {bot.user} запущен! Команды синхронизированы для сервера {GUILD_ID}.")
+        # ЗАПУСКАЕМ САМОПИНГ
+        bot.loop.create_task(self_ping())
     except Exception as e:
         print(f"❌ Ошибка синхронизации: {e}")
 
