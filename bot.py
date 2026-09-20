@@ -21,7 +21,7 @@ Thread(target=run_web).start()
 # =======================
 
 TOKEN = os.getenv('DISCORD_TOKEN')
-RENDER_URL = "https://anti-teammer-bot.onrender.com"  # ТВОЙ URL
+RENDER_URL = "https://notification-discord-bot-6n0h.onrender.com"  # ТВОЙ НОВЫЙ URL
 
 ROLE_ID = 1540325741835845652
 FIRST_CHANNEL_ID = 1541123271725027358
@@ -41,7 +41,7 @@ async def self_ping():
                     print(f"Self-ping: {response.status}")
         except Exception as e:
             print(f"Self-ping error: {e}")
-        await asyncio.sleep(240)  # 4 минуты
+        await asyncio.sleep(240)
 # ==============================
 
 class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox"):
@@ -90,7 +90,6 @@ class NickButtonView(discord.ui.View):
 
 @bot.tree.command(name="create_nick_button", description="Создать кнопку для отправки ника в Roblox", guild=discord.Object(id=GUILD_ID))
 async def create_button(interaction: discord.Interaction):
-    # СНАЧАЛА ВСЕГДА DEFER, ЧТОБЫ DISCORD ЗНАЛ, ЧТО МЫ РАБОТАЕМ
     await interaction.response.defer(ephemeral=True)
     
     if not interaction.user.guild_permissions.administrator:
@@ -127,6 +126,13 @@ async def on_ready():
         bot.loop.create_task(self_ping())
     except Exception as e:
         print(f"❌ Ошибка синхронизации: {e}")
+
+# ЭТОТ БЛОК БЫЛ ПРОПУЩЕН — БЕЗ НЕГО КОМАНДЫ !test И !sync НЕ РАБОТАЮТ
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+    await bot.process_commands(message)
 
 @bot.command()
 async def test(ctx):
