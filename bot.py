@@ -21,7 +21,7 @@ Thread(target=run_web).start()
 # =======================
 
 TOKEN = os.getenv('DISCORD_TOKEN')
-RENDER_URL = "https://notification-discord-bot-6n0h.onrender.com"  # ТВОЙ НОВЫЙ URL
+RENDER_URL = "https://notification-discord-bot-6n0h.onrender.com"
 
 ROLE_ID = 1540325741835845652
 FIRST_CHANNEL_ID = 1541123271725027358
@@ -127,15 +127,17 @@ async def on_ready():
     except Exception as e:
         print(f"❌ Ошибка синхронизации: {e}")
 
-# ЭТОТ БЛОК БЫЛ ПРОПУЩЕН — БЕЗ НЕГО КОМАНДЫ !test И !sync НЕ РАБОТАЮТ
+# ===== ОТЛАДКА: ПОКАЗЫВАЕТ ВСЕ СООБЩЕНИЯ В ЛОГАХ =====
 @bot.event
 async def on_message(message):
+    print(f"📩 Получено: '{message.content}' от {message.author}")
     if message.author == bot.user:
         return
     await bot.process_commands(message)
 
 @bot.command()
 async def test(ctx):
+    print(f"✅ Команда !test вызвана пользователем {ctx.author}")
     await ctx.send("✅ Бот работает!")
 
 @bot.command()
