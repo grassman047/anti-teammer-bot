@@ -4,8 +4,6 @@ import os
 from flask import Flask
 from threading import Thread
 import re
-import asyncio
-import aiohttp
 
 # ===== ВЕБ-СЕРВЕР =====
 app = Flask('')
@@ -21,7 +19,6 @@ Thread(target=run_web).start()
 # =======================
 
 TOKEN = os.getenv('DISCORD_TOKEN')
-RENDER_URL = "https://notification-discord-bot-6n0h.onrender.com"
 
 ROLE_ID = 1540325741835845652
 FIRST_CHANNEL_ID = 1541123271725027358
@@ -30,19 +27,6 @@ GUILD_ID = 1525217899386507424
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
-
-# ===== ФУНКЦИЯ САМОПИНГА =====
-async def self_ping():
-    await bot.wait_until_ready()
-    while not bot.is_closed():
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(RENDER_URL) as response:
-                    print(f"Self-ping: {response.status}")
-        except Exception as e:
-            print(f"Self-ping error: {e}")
-        await asyncio.sleep(240)
-# ==============================
 
 class RobloxNickModal(discord.ui.Modal, title="Введите ник в Roblox"):
     nick = discord.ui.TextInput(
@@ -123,21 +107,17 @@ async def on_ready():
     try:
         await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
         print(f"✅ Бот {bot.user} запущен! Команды синхронизированы для сервера {GUILD_ID}.")
-        bot.loop.create_task(self_ping())
     except Exception as e:
         print(f"❌ Ошибка синхронизации: {e}")
 
-# ===== ОТЛАДКА: ПОКАЗЫВАЕТ ВСЕ СООБЩЕНИЯ В ЛОГАХ =====
 @bot.event
 async def on_message(message):
-    print(f"📩 Получено: '{message.content}' от {message.author}")
     if message.author == bot.user:
         return
     await bot.process_commands(message)
 
 @bot.command()
 async def test(ctx):
-    print(f"✅ Команда !test вызвана пользователем {ctx.author}")
     await ctx.send("✅ Бот работает!")
 
 @bot.command()
